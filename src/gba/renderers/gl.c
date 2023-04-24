@@ -971,6 +971,14 @@ void GBAVideoGLRendererWritePalette(struct GBAVideoRenderer* renderer, uint32_t 
 }
 
 uint16_t GBAVideoGLRendererWriteVideoRegister(struct GBAVideoRenderer* renderer, uint32_t address, uint16_t value) {
+	struct WideLibretroRegisterWrite access = {
+		.addr = 0x04000000 + address,
+		.val = value,
+		.addr_len = 4,
+		.val_len = 2,
+	};
+	wide_libretro_hook(WIDE_LIBRETRO_HOOK_REGISTER_WRITE, &access);
+
 	struct GBAVideoGLRenderer* glRenderer = (struct GBAVideoGLRenderer*) renderer;
 	if (renderer->cache) {
 		GBAVideoCacheWriteVideoRegister(renderer->cache, address, value);

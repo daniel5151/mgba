@@ -27,3 +27,5 @@ version.c
 # Runtime generated cruft
 *.sav
 *.ss0
+
+/.vscode

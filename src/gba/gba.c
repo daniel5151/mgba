@@ -1063,3 +1063,16 @@ static void _clearSoftwareBreakpoint(struct ARMDebugger* debugger, const struct 
 	GBAClearBreakpoint((struct GBA*) debugger->cpu->master, breakpoint->d.address, breakpoint->sw.mode, breakpoint->sw.opcode);
 }
 #endif
+
+// TODO: find a better place for this stuff
+
+static wide_libretro_hook_cb wide_libretro_cb = NULL;
+
+void wide_libretro_install_hook(wide_libretro_hook_cb cb) {
+	wide_libretro_cb = cb;
+}
+void wide_libretro_hook(enum WideLibretroHookEvent event, const void* data) {
+	if (wide_libretro_cb != NULL) {
+		wide_libretro_cb(event, data);
+	}
+}

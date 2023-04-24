@@ -7,6 +7,7 @@
 
 #include <mgba/core/cache-set.h>
 #include <mgba/internal/arm/macros.h>
+#include <mgba/internal/gba/gba.h>
 #include <mgba/internal/gba/io.h>
 #include <mgba/internal/gba/renderers/cache-set.h>
 
@@ -155,6 +156,14 @@ static void GBAVideoSoftwareRendererDeinit(struct GBAVideoRenderer* renderer) {
 }
 
 static uint16_t GBAVideoSoftwareRendererWriteVideoRegister(struct GBAVideoRenderer* renderer, uint32_t address, uint16_t value) {
+	struct WideLibretroRegisterWrite access = {
+		.addr = 0x04000000 + address,
+		.val = value,
+		.addr_len = 4,
+		.val_len = 2,
+	};
+	wide_libretro_hook(WIDE_LIBRETRO_HOOK_REGISTER_WRITE, &access);
+
 	struct GBAVideoSoftwareRenderer* softwareRenderer = (struct GBAVideoSoftwareRenderer*) renderer;
 	if (renderer->cache) {
 		GBAVideoCacheWriteVideoRegister(renderer->cache, address, value);

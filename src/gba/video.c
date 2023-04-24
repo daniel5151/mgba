@@ -142,6 +142,12 @@ void _startHdraw(struct mTiming* timing, void* context, uint32_t cyclesLate) {
 	video->event.callback = _startHblank;
 	mTimingSchedule(timing, &video->event, VIDEO_HDRAW_LENGTH - cyclesLate);
 
+	if (video->vcount < GBA_VIDEO_VERTICAL_PIXELS) {
+		wide_libretro_hook(WIDE_LIBRETRO_HOOK_GBA_HBLANK_END, NULL);
+	} else {
+		wide_libretro_hook(WIDE_LIBRETRO_HOOK_GBA_VBLANK_HBLANK_END, NULL);
+	}
+
 	++video->vcount;
 	if (video->vcount == VIDEO_VERTICAL_TOTAL_PIXELS) {
 		video->vcount = 0;
@@ -197,6 +203,12 @@ void _startHblank(struct mTiming* timing, void* context, uint32_t cyclesLate) {
 	struct GBAVideo* video = context;
 	video->event.callback = _startHdraw;
 	mTimingSchedule(timing, &video->event, VIDEO_HBLANK_LENGTH - cyclesLate);
+
+	if (video->vcount < GBA_VIDEO_VERTICAL_PIXELS) {
+		wide_libretro_hook(WIDE_LIBRETRO_HOOK_GBA_HDRAW_END, NULL);
+	} else {
+		wide_libretro_hook(WIDE_LIBRETRO_HOOK_GBA_VBLANK_HDRAW_END, NULL);
+	}
 
 	// Begin Hblank
 	GBARegisterDISPSTAT dispstat = video->p->memory.io[REG_DISPSTAT >> 1];

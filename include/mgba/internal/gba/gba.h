@@ -190,6 +190,27 @@ void GBATestKeypadIRQ(struct GBA* gba);
 void GBAFrameStarted(struct GBA* gba);
 void GBAFrameEnded(struct GBA* gba);
 
+// TODO: find a better place to put this stuff
+#include <mgba-util/dllexports.h>
+
+enum WideLibretroHookEvent {
+	WIDE_LIBRETRO_HOOK_GBA_HDRAW_END,         // data = NULL
+	WIDE_LIBRETRO_HOOK_GBA_HBLANK_END,        // data = NULL
+	WIDE_LIBRETRO_HOOK_GBA_VBLANK_HDRAW_END,  // data = NULL
+	WIDE_LIBRETRO_HOOK_GBA_VBLANK_HBLANK_END, // data = NULL
+	WIDE_LIBRETRO_HOOK_REGISTER_WRITE,        // data = WideLibretroRegisterWrite
+};
+
+struct WideLibretroRegisterWrite {
+	uint32_t addr, val;
+	uint8_t addr_len, val_len;
+};
+
+typedef void (*wide_libretro_hook_cb)(enum WideLibretroHookEvent, const void*);
+
+MGBA_EXPORT void wide_libretro_install_hook(wide_libretro_hook_cb cb);
+MGBA_EXPORT void wide_libretro_hook(enum WideLibretroHookEvent event, const void* data);
+
 CXX_GUARD_END
 
 #endif
